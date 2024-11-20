@@ -1,5 +1,4 @@
 "use client";
-import { useRouter } from "next/navigation";
 import { atom, useAtom } from "jotai";
 import { supabase } from "@/lib/supabase";
 import type { User } from "@supabase/supabase-js";
@@ -41,13 +40,4 @@ export const useAuth = () => {
     signin,
     signout,
   };
-};
-
-export const useAuthRedirect = () => {
-  const [user] = useAtom(userAtom);
-  const router = useRouter();
-
-  if (!user) {
-    router.push("/login");
-  }
 };
