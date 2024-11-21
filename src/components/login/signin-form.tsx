@@ -86,7 +86,7 @@ export default function SignInForm() {
                     <FormLabel>Email</FormLabel>
                     <FormControl>
                       <Input
-                        placeholder="email@example.com"
+                        placeholder="Enter Your Email Here.."
                         {...field}
                         className="bg-white text-black"
                       />
@@ -103,6 +103,7 @@ export default function SignInForm() {
                     <FormLabel>Password</FormLabel>
                     <FormControl>
                       <Input
+                        placeholder="Enter Your Password Here.."
                         type="password"
                         {...field}
                         className="bg-white text-black"

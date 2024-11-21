@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import AuthRedirect from "@/lib/AuthRedirect";
-
+import { Toaster } from "@/components/ui/toaster";
+import { SideMenu } from "@/components/shared/Sidemenu";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
@@ -17,8 +18,14 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${inter.className}  bg-white text-black`}>
-        <AuthRedirect>{children}</AuthRedirect>
+      <body className={`${inter.className} bg-white text-black`}>
+        <div className="flex h-screen">
+          <SideMenu />
+          <div className="flex-1 overflow-y-auto">
+            <AuthRedirect>{children}</AuthRedirect>
+          </div>
+        </div>
+        <Toaster />
       </body>
     </html>
   );
