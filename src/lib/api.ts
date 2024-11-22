@@ -1,10 +1,10 @@
 import { supabase } from "@/lib/supabase";
-import { Faq } from "@/lib/types";
+import { Faq, Coupon, CouponForm } from "@/lib/types";
 
 export const getFaqs = async (): Promise<Faq[]> => {
   const { data, error } = await supabase.from<any, any>("faq").select("*");
   if (error) {
-    console.log("Error fetching categories:", error);
+    console.log("Error fetching FAQS:", error);
     throw error;
   }
   return data || [];
@@ -82,5 +82,33 @@ export const updateFaq = async (id: number, faq: Faq[]) => {
   if (faqArError) {
     console.error("Error updating FAQ in 'faq_ar' table:", faqArError);
     throw faqArError;
+  }
+};
+
+export const getCoupons = async (): Promise<Coupon[]> => {
+  const { data, error } = await supabase.from<any, any>("coupons").select("*");
+  if (error) {
+    console.log("Error fetching coupons:", error);
+    throw error;
+  }
+  return data || [];
+};
+
+export const createCoupon = async (coupon: CouponForm) => {
+  const { error } = await supabase.from("coupons").insert(coupon);
+  if (error) {
+    console.error("Error inserting FAQ into 'faq' table:", error);
+    throw error;
+  }
+};
+
+export const updateCoupon = async (id: number, status: string) => {
+  const { error } = await supabase
+    .from("coupons")
+    .update({ status })
+    .eq("id", id);
+  if (error) {
+    console.error("Error updating coupon in 'coupons' table:", error);
+    throw error;
   }
 };

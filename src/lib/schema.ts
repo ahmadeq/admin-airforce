@@ -8,3 +8,14 @@ export const faqSchema = z.object({
 });
 
 export type FAQFormValues = z.infer<typeof faqSchema>;
+
+export const couponSchema = z.object({
+  code: z.string().nonempty("Code is required"),
+  amount: z.number().min(1, "Amount must be greater than 0"),
+  max: z.number().min(1, "Max discount must be greater than 0"),
+  min: z.number().min(1, "Min purchase must be greater than 0"),
+  is_percentage: z.any(),
+  quantity: z.number().min(1, "Quantity must be greater than 0"),
+});
+
+export type CouponFormValues = z.infer<typeof couponSchema>;
