@@ -1,5 +1,5 @@
 import { supabase } from "@/lib/supabase";
-import { Faq, Coupon, CouponForm } from "@/lib/types";
+import { Faq, Coupon, CouponForm, Order, OrderItem } from "@/lib/types";
 
 export const getFaqs = async (): Promise<Faq[]> => {
   const { data, error } = await supabase.from<any, any>("faq").select("*");
@@ -111,4 +111,74 @@ export const updateCoupon = async (id: number, status: string) => {
     console.error("Error updating coupon in 'coupons' table:", error);
     throw error;
   }
+};
+
+export const getOrders = async (): Promise<Order[]> => {
+  const { data, error } = await supabase.from<any, any>("orders").select("*");
+  if (error) {
+    console.log("Error fetching orders:", error);
+    throw error;
+  }
+  return data || [];
+};
+
+export const getOrderById = async (id: number): Promise<Order[]> => {
+  const { data, error } = await supabase
+    .from<any, any>("orders")
+    .select("*")
+    .eq("id", id);
+  if (error) {
+    console.log("Error fetching orders:", error);
+    throw error;
+  }
+  return data || [];
+};
+
+export const updateOrderStatus = async (id: number, status: string) => {
+  const { error } = await supabase
+    .from("orders")
+    .update({ status })
+    .eq("id", id);
+  if (error) {
+    console.error("Error updating order in 'orders' table:", error);
+    throw error;
+  }
+};
+
+export const updateOrderPaymentMethod = async (
+  id: number,
+  payment_method: string
+) => {
+  const { error } = await supabase
+    .from("orders")
+    .update({ payment_method })
+    .eq("id", id);
+  if (error) {
+    console.error("Error updating order in 'orders' table:", error);
+    throw error;
+  }
+};
+
+export const getOrderItemsById = async (id: number): Promise<OrderItem[]> => {
+  const { data, error } = await supabase
+    .from<any, any>("order_items")
+    .select("*")
+    .eq("orderId", id);
+  if (error) {
+    console.log("Error fetching order items:", error);
+    throw error;
+  }
+  return data || [];
+};
+
+export const getItemVariantByVariantId = async (id: number) => {
+  const { data, error } = await supabase
+    .from<any, any>("product_variants")
+    .select("*")
+    .eq("id", id);
+  if (error) {
+    console.log("Error fetching item variant:", error);
+    throw error;
+  }
+  return data[0].size || [];
 };

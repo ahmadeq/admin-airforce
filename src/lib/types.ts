@@ -27,3 +27,29 @@ export type CouponForm = {
   code: string;
   status?: string;
 };
+
+export type Order = {
+  id: number;
+  payment_method: string;
+  status: string;
+  total: number;
+  address: string;
+  city: string;
+  created_at: string;
+  phone: string;
+  cartId: number;
+  notes: string;
+  name: string;
+};
+
+export type OrderItem = {
+  id: number;
+  productId: number;
+  variantId: number;
+  quantity: number;
+  price: number;
+  name: string;
+  image: string;
+  orderId: number;
+  variantName?: string;
+};
