@@ -6,6 +6,11 @@ export type Faq = {
   answer: string;
 };
 
+export type Category = {
+  id: number;
+  name: string;
+}
+
 export type Coupon = {
   id: number;
   created_at?: string;
@@ -53,3 +58,24 @@ export type OrderItem = {
   orderId: number;
   variantName?: string;
 };
+
+export type Product = {
+  id: number
+  name: string
+  description: string
+  price: number
+  sale_price: number
+  image: string
+  category: number
+  status: string
+}
+
+export type ProductForm = {
+  name: string
+  description: string
+  price: number
+  sale_price: number
+  image: string
+  category: number
+  status: string
+}

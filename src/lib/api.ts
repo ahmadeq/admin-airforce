@@ -1,5 +1,22 @@
 import { supabase } from "@/lib/supabase";
-import { Faq, Coupon, CouponForm, Order, OrderItem } from "@/lib/types";
+import {
+  Faq,
+  Coupon,
+  CouponForm,
+  Order,
+  OrderItem,
+  Product,
+  ProductForm,
+} from "@/lib/types";
+
+export const getCategories = async () => {
+  const { data, error } = await supabase.from<any, any>("categories").select("*");
+  if (error) {
+    console.log("Error fetching categories:", error);
+    throw error;
+  }
+  return data || [];
+};
 
 export const getFaqs = async (): Promise<Faq[]> => {
   const { data, error } = await supabase.from<any, any>("faq").select("*");
@@ -181,4 +198,112 @@ export const getItemVariantByVariantId = async (id: number) => {
     throw error;
   }
   return data[0].size || [];
+};
+
+export const getProducts = async () => {
+  const { data, error } = await supabase.from<any, any>("products").select("*");
+  if (error) {
+    console.log("Error fetching products:", error);
+    throw error;
+  }
+  return data || [];
+};
+
+export const getProductById = async (
+  id: number
+): Promise<[Product | null, Product | null]> => {
+  const { data: productData, error: productError } = await supabase
+    .from<any, any>("products")
+    .select("*")
+    .eq("id", id)
+    .single();
+
+  if (productError) {
+    console.error(
+      "Error fetching product from 'products' table:",
+      productError
+    );
+    throw productError;
+  }
+
+  const { data: productDataAr, error: productErrorAr } = await supabase
+    .from<any, any>("products_ar")
+    .select("*")
+    .eq("id", id)
+    .single();
+
+  if (productErrorAr) {
+    console.error(
+      "Error fetching product from 'products_ar' table:",
+      productErrorAr
+    );
+    throw productErrorAr;
+  }
+
+  return [productData, productDataAr];
+};
+
+export const updateProduct = async (id: number, product: Product[]) => {
+  const { error: productError } = await supabase
+    .from("products")
+    .update(product[0])
+    .eq("id", id);
+  if (productError) {
+    console.error("Error updating product in 'products' table:", productError);
+    throw productError;
+  }
+  const { error: productArError } = await supabase
+    .from("products_ar")
+    .update(product[1])
+    .eq("id", id);
+  if (productArError) {
+    console.error(
+      "Error updating product in 'products_ar' table:",
+      productArError
+    );
+    throw productArError;
+  }
+};
+
+
+export const deleteProduct = async (id: number ) => {
+  const { error: productError } = await supabase
+    .from("products")
+    .update({status:"SOLD"})
+    .eq("id", id);
+  if (productError) {
+    console.error("Error updating product in 'products' table:", productError);
+    throw productError;
+  }
+  const { error: productArError } = await supabase
+    .from("products_ar")
+    .update({status:"SOLD"})
+    .eq("id", id);
+  if (productArError) {
+    console.error(
+      "Error updating product in 'products_ar' table:",
+      productArError
+    );
+    throw productArError;
+  }
+};
+
+export const createProduct = async (product: ProductForm[]) => {
+  const { error: productError } = await supabase
+    .from("products")
+    .insert(product[0])
+  if (productError) {
+    console.error("Error updating product in 'products' table:", productError);
+    throw productError;
+  }
+  const { error: productArError } = await supabase
+    .from("products_ar")
+    .insert(product[1])
+  if (productArError) {
+    console.error(
+      "Error updating product in 'products_ar' table:",
+      productArError
+    );
+    throw productArError;
+  }
 };
