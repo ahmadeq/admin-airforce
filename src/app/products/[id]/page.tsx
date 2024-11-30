@@ -10,6 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { toast } from "@/hooks/use-toast"
 import { Product , Category } from "@/lib/types"
 import { getProductById , updateProduct, getCategories } from '@/lib/api'
+import { RoundSpinner } from "@/components/ui/spinner";
 
 
 export default function EditProductPage() {
@@ -92,7 +93,9 @@ export default function EditProductPage() {
   }
 
   if (isLoading) {
-    return <div className="flex justify-center items-center h-screen">Loading...</div>
+    <div className="flex flex-col min-h-screen items-center justify-center">
+    <RoundSpinner size="xxl" />
+  </div>
   }
 
   if (!product || !productAr) {

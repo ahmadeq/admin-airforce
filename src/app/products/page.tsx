@@ -84,7 +84,7 @@ export default function Home() {
     <div className="flex items-center justify-between mb-5">
   <h1 className="text-2xl font-bold">Products</h1>
   <Link href={`/products/new`}>
-          <Button className="bg-black text-white hover:bg-black/80 mr-20">
+          <Button className="bg-black text-white hover:bg-black/80 hover:text-white mr-20">
             <PlusCircle className="mr-2 h-4 w-4 text-white" />
             Add New Product
           </Button>

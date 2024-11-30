@@ -79,3 +79,17 @@ export type ProductForm = {
   category: number
   status: string
 }
+
+export type ProductImage = {
+  id: number
+  alt: string
+  url: string
+  productId: number
+}
+
+export type ProductVariant = {
+  id: number
+  size: string
+  stockQuantity: number
+  productId: number
+}

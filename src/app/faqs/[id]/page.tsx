@@ -163,7 +163,7 @@ export default function UpdateFAQPage() {
           <Button
             type="submit"
             disabled={isSubmitting}
-            className="bg-black text-white hover:bg-black/80 mr-20 px-12"
+            className="bg-black text-white hover:bg-black/80 hover:text-white mr-20 px-12"
           >
             {isSubmitting ? "Submitting..." : "Submit"}
           </Button>

@@ -99,7 +99,7 @@ export default function Home() {
         <h1 className="text-2xl font-bold mb-4">Frequently Asked Questions</h1>
 
         <Link href={`/faqs/new`}>
-          <Button className="bg-black text-white hover:bg-black/80 mr-20">
+          <Button className="bg-black text-white hover:bg-black/80 hover:text-white mr-20">
             <PlusCircle className="mr-2 h-4 w-4 text-white" />
             Add New FAQ
           </Button>

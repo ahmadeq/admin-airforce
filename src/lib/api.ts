@@ -307,3 +307,75 @@ export const createProduct = async (product: ProductForm[]) => {
     throw productArError;
   }
 };
+
+export const getProductImages = async (id: number) => {
+  const { data, error } = await supabase
+    .from<any, any>("product_images")
+    .select("*")
+    .eq("productId", id);
+  if (error) {
+    console.log("Error fetching product images:", error);
+    throw error;
+  }
+  return data || [];
+}
+
+export const createProductImage = async (image: any) => {
+  const { error } = await supabase.from("product_images").insert(image);
+  if (error) {
+    console.error("Error inserting product image into 'product_images' table:", error);
+    throw error;
+  }
+}
+
+export const deleteProductImage = async (id: number) => {
+  const { error } = await supabase.from("product_images").delete().eq("id", id);
+  if (error) {
+    console.error("Error deleting product image from 'product_images' table:", error);
+    throw error;
+  }
+}
+
+export const updateProductImage = async (id: number, image: any) => {
+  const { error } = await supabase.from("product_images").update(image).eq("id", id);
+  if (error) {
+    console.error("Error updating product image in 'product_images' table:", error);
+    throw error;
+  }
+}
+
+export const getProductVariants = async (id: number) => {
+  const { data, error } = await supabase
+    .from<any, any>("product_variants")
+    .select("*")
+    .eq("productId", id);
+  if (error) {
+    console.log("Error fetching product variants:", error);
+    throw error;
+  }
+  return data || [];
+}
+
+export const createProductVariant = async (variant: any) => {
+  const { error } = await supabase.from("product_variants").insert(variant);
+  if (error) {
+    console.error("Error inserting product variant into 'product_variants' table:", error);
+    throw error;
+  }
+}
+
+export const deleteProductVariant = async (id: number) => {
+  const { error } = await supabase.from("product_variants").delete().eq("id", id);
+  if (error) {
+    console.error("Error deleting product variant from 'product_variants' table:", error);
+    throw error;
+  }
+}
+
+export const updateProductVariant = async (id: number, variant: any) => {
+  const { error } = await supabase.from("product_variants").update(variant).eq("id", id);
+  if (error) {
+    console.error("Error updating product variant in 'product_variants' table:", error);
+    throw error;
+  }
+}
