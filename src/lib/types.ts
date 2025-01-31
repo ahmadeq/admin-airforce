@@ -1,5 +1,3 @@
-/* ============================    API TYPES    ============================*/
-
 export type Faq = {
   id?: number;
   question: string;
@@ -9,7 +7,7 @@ export type Faq = {
 export type Category = {
   id: number;
   name: string;
-}
+};
 
 export type Coupon = {
   id: number;
@@ -59,37 +57,29 @@ export type OrderItem = {
   variantName?: string;
 };
 
-export type Product = {
-  id: number
-  name: string
-  description: string
-  price: number
-  sale_price: number
-  image: string
-  category: number
-  status: string
-}
-
 export type ProductForm = {
-  name: string
-  description: string
-  price: number
-  sale_price: number
-  image: string
-  category: number
-  status: string
-}
+  name: string;
+  price: number;
+  sale_price: number;
+  image: string;
+  category_id: number;
+};
+
+export type Product = ProductForm & {
+  id: number;
+  status: string;
+};
 
 export type ProductImage = {
-  id: number
-  alt: string
-  url: string
-  productId: number
-}
+  id: number;
+  alt: string;
+  url: string;
+  productId: number;
+};
 
 export type ProductVariant = {
-  id: number
-  size: string
-  stockQuantity: number
-  productId: number
-}
+  id: number;
+  size: string;
+  stockQuantity: number;
+  productId: number;
+};
