@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/table";
 import { PlusCircle } from "lucide-react";
 import { Input } from "@/components/ui/input";
+import Image from "next/image";
 
 export default function Home() {
   const [storedProducts, setStoredProducts] = useState<Product[]>([]);
@@ -117,6 +118,7 @@ export default function Home() {
       <Table>
         <TableHeader>
           <TableRow>
+            <TableHead>Image</TableHead>
             <TableHead>Name</TableHead>
             <TableHead>On Sale</TableHead>
             <TableHead>Status</TableHead>
@@ -132,6 +134,15 @@ export default function Home() {
                 product.status === "SOLD" ? "bg-gray-100 hover:bg-gray-100" : ""
               }
             >
+              <TableCell>
+                <Image
+                  src={product.image}
+                  alt={product.name}
+                  width={50}
+                  height={50}
+                  className="rounded"
+                />
+              </TableCell>
               <TableCell>{product.name}</TableCell>
               <TableCell>
                 <span
