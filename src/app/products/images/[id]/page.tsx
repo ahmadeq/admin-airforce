@@ -23,14 +23,24 @@ import {
   createProductImage,
 } from "@/lib/api";
 import { RoundSpinner } from "@/components/ui/spinner";
+import { X } from "lucide-react";
+
+type ImageData = {
+  url: string;
+  alt: string;
+};
 
 export default function ProductImagesPage() {
   const [images, setImages] = useState<ProductImage[]>([]);
-  const [newImage, setNewImage] = useState({ url: "", alt: "" });
+  const [newImages, setNewImages] = useState<ImageData[]>([
+    { url: "", alt: "" },
+  ]);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false);
   const [imageToDelete, setImageToDelete] = useState<number | null>(null);
-  const [editedImages, setEditedImages] = useState<{ [key: number]: Partial<ProductImage> }>({});
+  const [editedImages, setEditedImages] = useState<{
+    [key: number]: Partial<ProductImage>;
+  }>({});
   const { id } = useParams();
   const [isLoading, setIsLoading] = useState(true);
 
@@ -64,12 +74,40 @@ export default function ProductImagesPage() {
     }
   };
 
+  const handleAddFields = () => {
+    setNewImages([...newImages, { url: "", alt: "" }]);
+  };
+
+  const handleRemoveFields = (index: number) => {
+    const updatedImages = newImages.filter((_, i) => i !== index);
+    setNewImages(updatedImages);
+  };
+
+  const handleInputChange = (
+    index: number,
+    field: keyof ImageData,
+    value: string
+  ) => {
+    const updatedImages = newImages.map((image, i) => {
+      if (i === index) {
+        return { ...image, [field]: value };
+      }
+      return image;
+    });
+    setNewImages(updatedImages);
+  };
+
   const handleAddNew = async () => {
-    console.log("Adding new image:", newImage);
-    await createProductImage({ ...newImage, productId: Number(id) });
-    setIsDialogOpen(false);
-    setNewImage({ url: "", alt: "" });
-    await fetchImages();
+    try {
+      for (const newImage of newImages) {
+        await createProductImage({ ...newImage, productId: Number(id) });
+      }
+      setIsDialogOpen(false);
+      setNewImages([]); // Reset the array of new images
+      await fetchImages();
+    } catch (error) {
+      console.error("Error creating product images:", error);
+    }
   };
 
   const fetchImages = async () => {
@@ -113,8 +151,8 @@ export default function ProductImagesPage() {
   if (isLoading) {
     return (
       <div className="flex flex-col min-h-screen items-center justify-center">
-      <RoundSpinner size="xxl" />
-    </div>
+        <RoundSpinner size="xxl" />
+      </div>
     );
   }
 
@@ -138,35 +176,62 @@ export default function ProductImagesPage() {
               iconPlacement="right"
               className="mb-4 bg-black text-white hover:bg-black hover:text-white"
             >
-              Add New Image
+              Add New Images
             </Button>
           </DialogTrigger>
-          <DialogOverlay />
-          <DialogContent>
+          <DialogContent className="sm:max-w-[425px]">
             <DialogHeader>
-              <DialogTitle>Add New Image</DialogTitle>
+              <DialogTitle>Add New Images</DialogTitle>
             </DialogHeader>
             <div className="grid gap-4 py-4">
-              <Input
-                placeholder="Image URL"
-                value={newImage.url}
-                onChange={(e) =>
-                  setNewImage({ ...newImage, url: e.target.value })
-                }
-              />
-              <Input
-                placeholder="Alt Text"
-                value={newImage.alt}
-                onChange={(e) =>
-                  setNewImage({ ...newImage, alt: e.target.value })
-                }
-              />
-              <Button onClick={handleAddNew}>Add Image</Button>
+              {newImages.map((image, index) => (
+                <div key={index} className="grid gap-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-medium">
+                      Image {index + 1}
+                    </span>
+                    {index > 0 && (
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => handleRemoveFields(index)}
+                      >
+                        <X className="h-4 w-4" />
+                      </Button>
+                    )}
+                  </div>
+                  <Input
+                    placeholder="Image URL"
+                    value={image.url}
+                    onChange={(e) =>
+                      handleInputChange(index, "url", e.target.value)
+                    }
+                  />
+                  <Input
+                    placeholder="Alt Text"
+                    value={image.alt}
+                    onChange={(e) =>
+                      handleInputChange(index, "alt", e.target.value)
+                    }
+                  />
+                </div>
+              ))}
+              <Button onClick={handleAddFields} variant="outline">
+                <Plus className="mr-2 h-4 w-4" /> Add Another Image
+              </Button>
+              <Button onClick={handleAddNew}>Add Images</Button>
             </div>
           </DialogContent>
         </Dialog>
       </div>
 
+      {images.length === 0 && (
+        <div className="flex flex-col h-[80vh] items-center justify-center gap-4">
+          <h1 className="text-5xl"> NO IMAGES FOR THIS PRODUCT</h1>
+          <div className="w-full bg-red-700 h-[3px] max-w-[700px]"></div>
+          <h2 className="text-2xl"> Add Images Please</h2>
+        </div>
+      )}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {images.map((image) => (
           <div key={image.id} className="border p-4 rounded-lg">
@@ -234,7 +299,9 @@ export default function ProductImagesPage() {
             <p>Are you sure you want to delete this image?</p>
             <div className="flex justify-end gap-4">
               <Button onClick={() => setIsConfirmDialogOpen(false)}>No</Button>
-              <Button className="bg-red-700 text-white" onClick={confirmDelete}>Yes</Button>
+              <Button className="bg-red-700 text-white" onClick={confirmDelete}>
+                Yes
+              </Button>
             </div>
           </div>
         </DialogContent>

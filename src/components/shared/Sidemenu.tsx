@@ -28,7 +28,7 @@ export function SideMenu() {
 
   return (
     <>
-      <div className="flex flex-col h-full w-64 bg-gray-100 text-gray-800">
+      <div className="flex flex-col h-full w-64 bg-gray-100 text-gray-800 border-r border-black">
         <div className="p-4 border-b border-gray-200">
           <div className="flex gap-4"></div>
           <h1 className={`text-4xl font-extrabold ${baskervville.className}`}>

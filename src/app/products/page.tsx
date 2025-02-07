@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { RoundSpinner } from "@/components/ui/spinner";
-import { getProducts , deleteProduct } from "@/lib/api";
+import { getProducts, deleteProduct } from "@/lib/api";
 import { Product } from "@/lib/types";
 import Link from "next/link";
 import { Pen, Trash2 } from "lucide-react";
@@ -80,17 +80,16 @@ export default function Home() {
 
   return (
     <div className="container mx-auto py-10 px-10 min-h-screen overflow-hidden">
-
-    <div className="flex items-center justify-between mb-5">
-  <h1 className="text-2xl font-bold">Products</h1>
-  <Link href={`/products/new`}>
+      <div className="flex items-center justify-between mb-5">
+        <h1 className="text-2xl font-bold">Products</h1>
+        <Link href={`/products/new`}>
           <Button className="bg-black text-white hover:bg-black/80 hover:text-white mr-20">
             <PlusCircle className="mr-2 h-4 w-4 text-white" />
             Add New Product
           </Button>
         </Link>
-</div>
-      
+      </div>
+
       <Table>
         <TableHeader>
           <TableRow>
@@ -105,16 +104,24 @@ export default function Home() {
           {products.map((product) => (
             <TableRow
               key={product.id}
-              className={product.status === "SOLD" ? "bg-gray-100 hover:bg-gray-100" : ""}
+              className={
+                product.status === "SOLD" ? "bg-gray-100 hover:bg-gray-100" : ""
+              }
             >
               <TableCell>{product.name}</TableCell>
               <TableCell>
                 <span
                   className={`px-2 py-1 rounded-full text-white ${
-                    product.sale_price > 0 ? "bg-red-500" : "bg-green-500"
+                    product.sale_price > 0 &&
+                    product.sale_price !== product.price
+                      ? "bg-red-500"
+                      : "bg-green-500"
                   }`}
                 >
-                  {product.sale_price > 0 ? "On Sale" : "Not on Sale"}
+                  {product.sale_price > 0 &&
+                  product.sale_price !== product.price
+                    ? "On Sale"
+                    : "Not on Sale"}
                 </span>
               </TableCell>
               <TableCell>
