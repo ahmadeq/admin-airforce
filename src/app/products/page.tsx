@@ -16,12 +16,27 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { PlusCircle } from "lucide-react";
+import { Input } from "@/components/ui/input";
+
 export default function Home() {
+  const [storedProducts, setStoredProducts] = useState<Product[]>([]);
   const [products, setProducts] = useState<Product[]>([]);
   const [fetchStates, setFetchStates] = useState({
     loading: false,
     error: null,
   });
+  const [searchTerm, setSearchTerm] = useState("");
+
+  useEffect(() => {
+    if (!searchTerm) {
+      setProducts(storedProducts);
+    } else if (searchTerm) {
+      const filteredProducts = storedProducts.filter((product) =>
+        product.name.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+      setProducts(filteredProducts);
+    }
+  }, [searchTerm]);
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -36,6 +51,7 @@ export default function Home() {
           a.status === "SOLD" ? 1 : b.status === "SOLD" ? -1 : 0
         );
         setProducts(sortedProducts);
+        setStoredProducts(sortedProducts);
       } catch (error: any) {
         console.error("Failed to fetch orders:", error);
         setFetchStates((prevState) => ({
@@ -82,6 +98,14 @@ export default function Home() {
     <div className="container mx-auto py-10 px-10 min-h-screen overflow-hidden">
       <div className="flex items-center justify-between mb-5">
         <h1 className="text-2xl font-bold">Products</h1>
+
+        <Input
+          placeholder="Search by name"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="w-full md:w-[300px]"
+        />
+
         <Link href={`/products/new`}>
           <Button className="bg-black text-white hover:bg-black/80 hover:text-white mr-20">
             <PlusCircle className="mr-2 h-4 w-4 text-white" />

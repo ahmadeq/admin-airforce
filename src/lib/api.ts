@@ -203,7 +203,11 @@ export const getItemVariantByVariantId = async (id: number) => {
 };
 
 export const getProducts = async () => {
-  const { data, error } = await supabase.from<any, any>("products").select("*");
+  const { data, error } = await supabase
+    .from<any, any>("products")
+    .select("*")
+    .order("id", { ascending: false });
+
   if (error) {
     console.log("Error fetching products:", error);
     throw error;
