@@ -47,9 +47,9 @@ export default function ProductVariantsPage() {
     value: String(i + 36),
   }));
 
-  const apparelSizes = Array.from({ length: 10 }, (_, i) => ({
-    label: String(i + 36),
-    value: String(i + 36),
+  const apparelSizes = ["S", "M", "L", "XL"].map((size) => ({
+    label: size,
+    value: size,
   }));
 
   const handleUpdate = async (variantId: number) => {

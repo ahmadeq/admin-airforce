@@ -1,5 +1,4 @@
 "use client";
-
 import { useEffect, useState } from "react";
 import { RoundSpinner } from "@/components/ui/spinner";
 import { getOrders, updateOrderStatus } from "@/lib/api";
@@ -194,7 +193,7 @@ export default function Home() {
                 </Select>
               </TableCell>
               <TableCell>
-                <Link href={`/orders/${order.id}`}>
+                <Link href={`/orders/${order?.id}`}>
                   <Button variant="outline">View</Button>
                 </Link>
               </TableCell>

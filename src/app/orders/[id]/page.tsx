@@ -5,7 +5,7 @@ import { RoundSpinner } from "@/components/ui/spinner";
 import {
   getOrderById,
   updateOrderStatus,
-  getOrderItemsById,
+  getOrderItemsByCartId,
   updateOrderPaymentMethod,
   getItemVariantByVariantId,
 } from "@/lib/api";
@@ -75,12 +75,12 @@ export default function Home() {
         error: null,
       }));
       try {
-        const [orderInfoData, orderItemsData] = await Promise.all([
-          getOrderById(Number(id)),
-          getOrderItemsById(Number(id)),
-        ]);
+        const orderInfoData = await getOrderById(Number(id));
+        console.log("Order Info Data:", orderInfoData);
+        const orderItemsData = await getOrderItemsByCartId(
+          orderInfoData[0]?.cartId
+        );
 
-        // Fetch variant names for each order item
         const orderItemsWithVariants = await Promise.all(
           orderItemsData.map(async (item) => {
             const variantName = await getItemVariantByVariantId(item.variantId);
@@ -124,7 +124,7 @@ export default function Home() {
 
   return (
     <div className="container mx-auto p-4 space-y-6">
-      <h1 className="text-3xl font-bold">Order #{orderInfo.id}</h1>
+      <h1 className="text-3xl font-bold">Order #{orderInfo?.id}</h1>
 
       <Card>
         <CardHeader>
@@ -136,9 +136,9 @@ export default function Home() {
               <dt className="font-semibold">Status</dt>
               <dd>
                 <Select
-                  defaultValue={orderInfo.status}
+                  defaultValue={orderInfo?.status}
                   onValueChange={(value) =>
-                    handleUpdateStatus(orderInfo.id, value as Order["status"])
+                    handleUpdateStatus(orderInfo?.id, value as Order["status"])
                   }
                 >
                   <SelectTrigger className="w-[180px]">
@@ -156,15 +156,15 @@ export default function Home() {
             <div>
               <dt className="font-semibold">Payment Method</dt>
               <dd>
-                {" "}
                 <Select
-                  defaultValue={orderInfo.payment_method}
+                  defaultValue={orderInfo?.payment_method}
                   onValueChange={(value) =>
                     handleUpdatePaymentMethod(
-                      orderInfo.id,
+                      orderInfo?.id,
                       value as Order["payment_method"]
                     )
                   }
+                  disabled={true}
                 >
                   <SelectTrigger className="w-[180px]">
                     <SelectValue placeholder="Select status" />
@@ -179,29 +179,29 @@ export default function Home() {
             </div>
             <div>
               <dt className="font-semibold">Total</dt>
-              <dd>{orderInfo.total.toFixed(2)} JD</dd>
+              <dd>{orderInfo?.total.toFixed(2)} JD</dd>
             </div>
             <div>
               <dt className="font-semibold">Date</dt>
-              <dd>{format(new Date(orderInfo.created_at), "yyyy-MM-dd")}</dd>
+              <dd>{format(new Date(orderInfo?.created_at), "yyyy-MM-dd")}</dd>
             </div>
             <div>
               <dt className="font-semibold">Address</dt>
               <dd>
-                {orderInfo.address}, {orderInfo.city}
+                {orderInfo?.address}, {orderInfo?.city}
               </dd>
             </div>
             <div>
               <dt className="font-semibold">Phone</dt>
-              <dd>{orderInfo.phone}</dd>
+              <dd>{orderInfo?.phone}</dd>
             </div>
             <div>
               <dt className="font-semibold">Cart ID</dt>
-              <dd>{orderInfo.cartId}</dd>
+              <dd>{orderInfo?.cartId}</dd>
             </div>
             <div>
               <dt className="font-semibold">Notes</dt>
-              <dd>{orderInfo.notes || "No notes"}</dd>
+              <dd>{orderInfo?.notes || "No notes"}</dd>
             </div>
           </dl>
         </CardContent>
@@ -237,9 +237,7 @@ export default function Home() {
                   <TableCell>{item.name}</TableCell>
                   <TableCell>{item.quantity}</TableCell>
                   <TableCell>{item.variantName}</TableCell>
-                  <TableCell>
-                    {(item.quantity * item.price).toFixed(2)} JD
-                  </TableCell>
+                  <TableCell>{item.price.toFixed(2)} JD</TableCell>
                 </TableRow>
               ))}
             </TableBody>

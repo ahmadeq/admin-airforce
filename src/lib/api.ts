@@ -178,11 +178,13 @@ export const updateOrderPaymentMethod = async (
   }
 };
 
-export const getOrderItemsById = async (id: number): Promise<OrderItem[]> => {
+export const getOrderItemsByCartId = async (
+  id: number
+): Promise<OrderItem[]> => {
   const { data, error } = await supabase
-    .from<any, any>("order_items")
+    .from<any, any>("cart_items")
     .select("*")
-    .eq("orderId", id);
+    .eq("cartId", id);
   if (error) {
     console.log("Error fetching order items:", error);
     throw error;
