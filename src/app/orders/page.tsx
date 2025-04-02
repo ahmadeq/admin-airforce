@@ -47,7 +47,7 @@ export default function Home() {
       )
     );
   };
-
+// Remove this comment
   useEffect(() => {
     const fetchOrders = async () => {
       setFetchStates((prevState) => ({
