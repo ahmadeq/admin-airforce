@@ -1,378 +1,42 @@
 import { supabase } from "@/lib/supabase";
-import {
-  Faq,
-  Coupon,
-  CouponForm,
-  Order,
-  OrderItem,
-  Product,
-  ProductForm,
-} from "@/lib/types";
 
-export const getCategories = async () => {
+export const getContactResponses = async () => {
   const { data, error } = await supabase
-    .from<any, any>("categories")
-    .select("*");
-  if (error) {
-    console.log("Error fetching categories:", error);
-    throw error;
-  }
-  return data || [];
-};
-
-export const getFaqs = async (): Promise<Faq[]> => {
-  const { data, error } = await supabase.from<any, any>("faq").select("*");
-  if (error) {
-    console.log("Error fetching FAQS:", error);
-    throw error;
-  }
-  return data || [];
-};
-
-export const deleteFaq = async (id: number) => {
-  const { error: faqError } = await supabase.from("faq").delete().eq("id", id);
-  if (faqError) {
-    console.error("Error deleting FAQ from 'faq' table:", faqError);
-    throw faqError;
-  }
-
-  const { error: faqArError } = await supabase
-    .from("faq_ar")
-    .delete()
-    .eq("id", id);
-  if (faqArError) {
-    console.error("Error deleting FAQ from 'faq_ar' table:", faqArError);
-    throw faqArError;
-  }
-  console.log(`Deleted FAQ with ID ${id} from 'faq_ar' table`);
-};
-
-export const createFaq = async (faq: Faq[]) => {
-  const { error } = await supabase.from("faq").insert(faq[0]);
-  if (error) {
-    console.error("Error inserting FAQ into 'faq' table:", error);
-    throw error;
-  }
-  const { error: arError } = await supabase.from("faq_ar").insert(faq[1]);
-  if (arError) {
-    console.error("Error inserting FAQ into 'faq_ar' table:", arError);
-    throw arError;
-  }
-};
-
-export const getFaqById = async (id: number) => {
-  const { data: faqData, error: faqError } = await supabase
-    .from("faq")
+    .from<any, any>("contact")
     .select("*")
-    .eq("id", id)
-    .single();
-  if (faqError) {
-    console.error("Error fetching FAQ from 'faq' table:", faqError);
-    throw faqError;
-  }
-
-  const { data: faqArData, error: faqArError } = await supabase
-    .from("faq_ar")
-    .select("*")
-    .eq("id", id)
-    .single();
-  if (faqArError) {
-    console.error("Error fetching FAQ from 'faq_ar' table:", faqArError);
-    throw faqArError;
-  }
-
-  return [faqData, faqArData];
-};
-
-export const updateFaq = async (id: number, faq: Faq[]) => {
-  const { error: faqError } = await supabase
-    .from("faq")
-    .update(faq[0])
-    .eq("id", id);
-  if (faqError) {
-    console.error("Error updating FAQ in 'faq' table:", faqError);
-    throw faqError;
-  }
-
-  const { error: faqArError } = await supabase
-    .from("faq_ar")
-    .update(faq[1])
-    .eq("id", id);
-  if (faqArError) {
-    console.error("Error updating FAQ in 'faq_ar' table:", faqArError);
-    throw faqArError;
-  }
-};
-
-export const getCoupons = async (): Promise<Coupon[]> => {
-  const { data, error } = await supabase.from<any, any>("coupons").select("*");
+    .order("created_at", { ascending: false });
   if (error) {
-    console.log("Error fetching coupons:", error);
+    console.log("Error fetching contact responses:", error);
     throw error;
   }
   return data || [];
 };
 
-export const createCoupon = async (coupon: CouponForm) => {
-  const { error } = await supabase.from("coupons").insert(coupon);
-  if (error) {
-    console.error("Error inserting FAQ into 'faq' table:", error);
-    throw error;
-  }
-};
-
-export const updateCoupon = async (id: number, status: string) => {
-  const { error } = await supabase
-    .from("coupons")
-    .update({ status })
-    .eq("id", id);
-  if (error) {
-    console.error("Error updating coupon in 'coupons' table:", error);
-    throw error;
-  }
-};
-
-export const getOrders = async (): Promise<Order[]> => {
-  const { data, error } = await supabase.from<any, any>("orders").select("*");
-  if (error) {
-    console.log("Error fetching orders:", error);
-    throw error;
-  }
-  return data || [];
-};
-
-export const getOrderById = async (id: number): Promise<Order[]> => {
+export const getJoinFormResponses = async () => {
   const { data, error } = await supabase
-    .from<any, any>("orders")
+    .from<any, any>("join-utopia")
     .select("*")
-    .eq("id", id);
+    .order("created_at", { ascending: false });
   if (error) {
-    console.log("Error fetching orders:", error);
+    console.log("Error fetching join form responses:", error);
     throw error;
   }
   return data || [];
 };
 
-export const updateOrderStatus = async (id: number, status: string) => {
-  const { error } = await supabase
-    .from("orders")
-    .update({ status })
-    .eq("id", id);
-  if (error) {
-    console.error("Error updating order in 'orders' table:", error);
-    throw error;
-  }
-};
-
-export const updateOrderPaymentMethod = async (
-  id: number,
-  payment_method: string
+export const updateContactResponseStatus = async (
+  id: string,
+  hide: boolean
 ) => {
-  const { error } = await supabase
-    .from("orders")
-    .update({ payment_method })
-    .eq("id", id);
-  if (error) {
-    console.error("Error updating order in 'orders' table:", error);
-    throw error;
-  }
-};
-
-export const getOrderItemsByCartId = async (
-  id: number
-): Promise<OrderItem[]> => {
   const { data, error } = await supabase
-    .from<any, any>("cart_items")
-    .select("*")
-    .eq("cartId", id);
-  if (error) {
-    console.log("Error fetching order items:", error);
-    throw error;
-  }
-  return data || [];
-};
-
-export const getItemVariantByVariantId = async (id: number) => {
-  const { data, error } = await supabase
-    .from<any, any>("product_variants")
-    .select("*")
-    .eq("id", id);
-  if (error) {
-    console.log("Error fetching item variant:", error);
-    throw error;
-  }
-  return data[0].size || [];
-};
-
-export const getProducts = async () => {
-  const { data, error } = await supabase
-    .from<any, any>("products")
-    .select("*")
-    .order("id", { ascending: false });
-
-  if (error) {
-    console.log("Error fetching products:", error);
-    throw error;
-  }
-  return data || [];
-};
-
-export const getProductById = async (id: number): Promise<Product | null> => {
-  const { data: productData, error: productError } = await supabase
-    .from<any, any>("products")
-    .select("*")
+    .from("contact")
+    .update({ hide })
     .eq("id", id)
-    .single();
+    .select("*");
 
-  if (productError) {
-    console.error(
-      "Error fetching product from 'products' table:",
-      productError
-    );
-    throw productError;
-  }
-
-  return productData;
-};
-
-export const updateProduct = async (id: number, product: Product) => {
-  const { error: productError } = await supabase
-    .from("products")
-    .update(product)
-    .eq("id", id);
-  if (productError) {
-    console.error("Error updating product in 'products' table:", productError);
-    throw productError;
-  }
-};
-
-export const deleteProduct = async (id: number) => {
-  const { error: productError } = await supabase
-    .from("products")
-    .update({ status: "SOLD" })
-    .eq("id", id);
-  if (productError) {
-    console.error("Error updating product in 'products' table:", productError);
-    throw productError;
-  }
-  const { error: productArError } = await supabase
-    .from("products_ar")
-    .update({ status: "SOLD" })
-    .eq("id", id);
-  if (productArError) {
-    console.error(
-      "Error updating product in 'products_ar' table:",
-      productArError
-    );
-    throw productArError;
-  }
-};
-
-export const createProduct = async (product: ProductForm) => {
-  const { error: productError } = await supabase
-    .from("products")
-    .insert(product);
-  if (productError) {
-    console.error("Error updating product in 'products' table:", productError);
-    throw productError;
-  }
-};
-
-export const getProductImages = async (id: number) => {
-  const { data, error } = await supabase
-    .from<any, any>("product_images")
-    .select("*")
-    .eq("productId", id);
   if (error) {
-    console.log("Error fetching product images:", error);
+    console.log("Error updating contact response status:", error);
     throw error;
   }
-  return data || [];
-};
-
-export const createProductImage = async (image: any) => {
-  const { error } = await supabase.from("product_images").insert(image);
-  if (error) {
-    console.error(
-      "Error inserting product image into 'product_images' table:",
-      error
-    );
-    throw error;
-  }
-};
-
-export const deleteProductImage = async (id: number) => {
-  const { error } = await supabase.from("product_images").delete().eq("id", id);
-  if (error) {
-    console.error(
-      "Error deleting product image from 'product_images' table:",
-      error
-    );
-    throw error;
-  }
-};
-
-export const updateProductImage = async (id: number, image: any) => {
-  const { error } = await supabase
-    .from("product_images")
-    .update(image)
-    .eq("id", id);
-  if (error) {
-    console.error(
-      "Error updating product image in 'product_images' table:",
-      error
-    );
-    throw error;
-  }
-};
-
-export const getProductVariants = async (id: number) => {
-  const { data, error } = await supabase
-    .from<any, any>("product_variants")
-    .select("*")
-    .eq("productId", id);
-  if (error) {
-    console.log("Error fetching product variants:", error);
-    throw error;
-  }
-  return data || [];
-};
-
-export const createProductVariant = async (variant: any) => {
-  const { error } = await supabase.from("product_variants").insert(variant);
-  if (error) {
-    console.error(
-      "Error inserting product variant into 'product_variants' table:",
-      error
-    );
-    throw error;
-  }
-};
-
-export const deleteProductVariant = async (id: number) => {
-  const { error } = await supabase
-    .from("product_variants")
-    .delete()
-    .eq("id", id);
-  if (error) {
-    console.error(
-      "Error deleting product variant from 'product_variants' table:",
-      error
-    );
-    throw error;
-  }
-};
-
-export const updateProductVariant = async (id: number, variant: any) => {
-  const { error } = await supabase
-    .from("product_variants")
-    .update(variant)
-    .eq("id", id);
-  if (error) {
-    console.error(
-      "Error updating product variant in 'product_variants' table:",
-      error
-    );
-    throw error;
-  }
+  return data ? data[0] : null;
 };

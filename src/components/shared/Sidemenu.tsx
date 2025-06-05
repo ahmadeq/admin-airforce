@@ -1,22 +1,14 @@
 "use client";
 import Link from "next/link";
-import {
-  HelpCircle,
-  Package,
-  ShoppingCart,
-  Tag,
-  ChartNoAxesCombined,
-} from "lucide-react";
-import { Baskervville } from "next/font/google";
+import { ChartNoAxesCombined, FileUser, Mail } from "lucide-react";
+import { Orbitron } from "next/font/google";
 import { usePathname } from "next/navigation";
-const baskervville = Baskervville({ weight: "400", subsets: ["latin"] });
+const baskervville = Orbitron({ weight: "400", subsets: ["latin"] });
 
 const menuItems = [
-  { name: "Dashboard", href: "/", icon: ChartNoAxesCombined },
-  { name: "FAQs", href: "/faqs", icon: HelpCircle },
-  { name: "Orders", href: "/orders", icon: ShoppingCart },
-  { name: "Products", href: "/products", icon: Package },
-  { name: "Coupons", href: "/coupons", icon: Tag },
+  { name: "DASHBOARD", href: "/", icon: ChartNoAxesCombined },
+  { name: "CONTACT FORM", href: "/forms/contact", icon: Mail },
+  { name: "JOIN FORM", href: "/forms/join-utopia", icon: FileUser },
 ];
 
 export function SideMenu() {
@@ -32,7 +24,7 @@ export function SideMenu() {
         <div className="p-4 border-b border-gray-200">
           <div className="flex gap-4"></div>
           <h1 className={`text-4xl font-extrabold ${baskervville.className}`}>
-            BY Eq
+            UTOPIA
           </h1>
         </div>
         <nav className="flex-1 overflow-y-auto">
