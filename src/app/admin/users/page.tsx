@@ -43,7 +43,7 @@ export default function UsersPage() {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-[90vh] ">
+    <div className="flex flex-col items-center justify-center min-h-[60vh] ">
       <div>
         <h1 className="text-2xl font-bold tracking-tight">New Admin</h1>
         <p className="text-sm text-muted-foreground mb-4">

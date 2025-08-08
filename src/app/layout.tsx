@@ -1,28 +1,33 @@
-import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+"use client";
+
+import { getToken } from "../lib/api";
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { SideMenu } from "../components/shared/Sidemenu";
 import "./globals.css";
-import { Toaster } from "@/components/ui/toaster";
-import { SideMenu } from "@/components/shared/Sidemenu";
-const inter = Inter({ subsets: ["latin"] });
 
-export const metadata: Metadata = {
-  title: "Assesment Exam Admin Area",
-  description: "Air Force Admin Dashboard",
-};
-
-export default function RootLayout({
+export default function AdminLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
+  const router = useRouter();
+
+  useEffect(() => {
+    const token = getToken();
+    if (!token) {
+      router.replace("/login");
+    }
+  }, [router]);
+
   return (
     <html lang="en">
-      <body className={`${inter.className} bg-white text-black`}>
-        <div className="flex h-screen">
-          {/* <SideMenu /> */}
-          <div className="flex-1 overflow-y-auto">{children}</div>
+      <head />
+      <body>
+        <div className="flex min-h-screen bg-gray-50">
+          <SideMenu />
+          <main className="flex-1 p-6">{children}</main>
         </div>
-        <Toaster />
       </body>
     </html>
   );

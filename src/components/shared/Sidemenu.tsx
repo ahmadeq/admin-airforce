@@ -8,12 +8,12 @@ const baskervville = Orbitron({ weight: "400", subsets: ["latin"] });
 const menuItems = [
   {
     name: "Home",
-    href: "/admin",
+    href: "/",
     icon: Home,
     description: "Admin Dashboard",
   },
   {
-    name: "Admins",
+    name: "Create Admin",
     href: "/admin/users",
     icon: Lock,
     description: "Manage admin users.",
@@ -53,8 +53,8 @@ export function SideMenu() {
           {(() => {
             // Map pathnames to headings
             const headings: { [key: string]: string } = {
-              "/admin": "Home",
-              "/admin/users": "Admins",
+              "/": "Home",
+              "/admin/users": "Admin",
               "/admin/students": "Students",
               "/admin/exams": "Exams",
               "/admin/results": "Results",
