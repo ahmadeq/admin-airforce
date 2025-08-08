@@ -1,42 +1,46 @@
-import { supabase } from "@/lib/supabase";
+import axios from "axios";
 
-export const getContactResponses = async () => {
-  const { data, error } = await supabase
-    .from<any, any>("contact")
-    .select("*")
-    .order("created_at", { ascending: false });
-  if (error) {
-    console.log("Error fetching contact responses:", error);
-    throw error;
+// Get JWT from cookies
+export function getToken() {
+  if (typeof document === "undefined") return null;
+  const match = document.cookie.match(/(?:^|; )token=([^;]*)/);
+  return match ? decodeURIComponent(match[1]) : null;
+}
+
+// Set JWT in cookies
+export function setToken(token: string) {
+  if (typeof document !== "undefined") {
+    document.cookie = `token=${encodeURIComponent(token)}; path=/;`;
   }
-  return data || [];
-};
+}
 
-export const getJoinFormResponses = async () => {
-  const { data, error } = await supabase
-    .from<any, any>("join-utopia")
-    .select("*")
-    .order("created_at", { ascending: false });
-  if (error) {
-    console.log("Error fetching join form responses:", error);
-    throw error;
+// Remove JWT and redirect to login
+export function logout() {
+  if (typeof document !== "undefined") {
+    document.cookie = "token=; Max-Age=0; path=/;";
+    window.location.href = "/login";
   }
-  return data || [];
-};
+}
 
-export const updateContactResponseStatus = async (
-  id: string,
-  hide: boolean
-) => {
-  const { data, error } = await supabase
-    .from("contact")
-    .update({ hide })
-    .eq("id", id)
-    .select("*");
+// Axios instance with 401 handling
+export const api = axios.create({
+  baseURL: process.env.NEXT_PUBLIC_API_URL || "",
+});
 
-  if (error) {
-    console.log("Error updating contact response status:", error);
-    throw error;
+api.interceptors.request.use((config) => {
+  const token = getToken();
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
   }
-  return data ? data[0] : null;
-};
+  return config;
+});
+
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response && error.response.status === 401) {
+      logout();
+    }
+    return Promise.reject(error);
+  }
+);
