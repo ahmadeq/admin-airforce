@@ -29,7 +29,7 @@ export default function SignInForm() {
       const res = await api.post("/auth/login", { username, password });
       console.log("Login response:", res);
       setToken(res?.data?.access_token);
-      router.push("/admin");
+      router.push("/");
     } catch (err: any) {
       setError(err?.response?.data?.message || "Login failed");
     } finally {
