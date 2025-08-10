@@ -22,9 +22,24 @@ import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { FileDown, Loader2, Search } from "lucide-react";
 import { api } from "@/lib/api";
+import * as XLSX from "xlsx";
 
 type Exam = { id: string; title: string };
 type Result = { id: string; studentName: string; score: number };
+
+// Section type to Arabic mapping
+const SECTION_TYPE_AR = {
+  multitasking_coordination_test: "اختبار التنسيق المتعدد المهام",
+  multiple_meters_needles: "اختبار مؤشرات العدادات المتعددة",
+  cube_rotation_test: "اختبار تدوير المكعب",
+  dice_folding_test: "اختبار طي النرد",
+  running_memory_span_test: "اختبار مدى الذاكرة الجارية",
+  dice_arithmetic_test: "اختبار حساب النرد",
+  multitasking_pointing_test: "اختبار التوجيه المتعدد المهام",
+  spacial_awareness: "اختبار الوعي المكاني",
+  attention_and_alertness: "اختبار الانتباه والتيقظ",
+  focused_attention: "اختبار الانتباه المركز",
+};
 
 export default function ResultsPage() {
   const [exams, setExams] = useState<Exam[]>([]);
@@ -48,7 +63,17 @@ export default function ResultsPage() {
     setError("");
     api
       .get(`/exam-results/${id}`)
-      .then((res) => setResults(res.data))
+      .then((res) => {
+        // Map nested API response to flat Result[]
+        const mapped = Array.isArray(res.data)
+          ? res.data.map((r: any) => ({
+              id: r.id,
+              studentName: r.student?.name ?? "",
+              score: r.score,
+            }))
+          : [];
+        setResults(mapped);
+      })
       .catch(() => setError("Failed to load results"))
       .finally(() => setLoading(false));
   };
@@ -58,7 +83,7 @@ export default function ResultsPage() {
 
   const filtered = useMemo(() => {
     const t = q.toLowerCase();
-    return results.filter((r) => r.studentName.toLowerCase().includes(t));
+    return results.filter((r) => r?.studentName?.toLowerCase().includes(t));
   }, [q, results]);
 
   const stats = useMemo(() => {
@@ -77,17 +102,35 @@ export default function ResultsPage() {
     if (!examId) return;
     setExporting(true);
     try {
-      const res = await api.get(`/exam-results/${examId}/export-csv`, {
-        responseType: "blob",
+      const res = await api.get(`/exam-results/${examId}/with-sections-json`);
+      const { sectionTypes, attempts } = res.data;
+      // Build columns: name, national id, score, ...section names (arabic)
+      const sectionHeaders = sectionTypes.map(
+        (type: string) =>
+          SECTION_TYPE_AR[type as keyof typeof SECTION_TYPE_AR] || type
+      );
+      const headers = ["الاسم", "الرقم الوطني", "الدرجة", ...sectionHeaders];
+      const rows = attempts.map((a: any) => {
+        return [
+          a.student.name,
+          a.student.nationalId,
+          a.score,
+          ...(a.sectionContributions || []).map((s: number) => s),
+        ];
       });
-      const url = window.URL.createObjectURL(new Blob([res.data]));
+      const worksheet = XLSX.utils.aoa_to_sheet([headers, ...rows]);
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, worksheet, "Results");
+      const wbout = XLSX.write(workbook, { bookType: "xlsx", type: "array" });
+      const blob = new Blob([wbout], { type: "application/octet-stream" });
+      const url = window.URL.createObjectURL(blob);
       const link = document.createElement("a");
       link.href = url;
-      link.setAttribute("download", `exam-results-${examId}.csv`);
+      link.setAttribute("download", `exam-results-${examId}.xlsx`);
       document.body.appendChild(link);
       link.click();
       link.parentNode?.removeChild(link);
-      toast({ title: "Exported CSV" });
+      toast({ title: "تم تصدير النتائج إلى Excel" });
     } catch {
       toast({
         title: "Error",
